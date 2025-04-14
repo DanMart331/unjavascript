@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.comparisonRow {
+  margin-left: 30px;
+  margin-right: 10px;
+  margin-top: 25px;
+  display: inline-block;
+  font-weight: bold;
+}
+
+.deleteIcon {
+  margin-left: 10px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
