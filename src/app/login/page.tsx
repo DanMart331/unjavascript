@@ -44,7 +44,7 @@ export default function loginPage() {
 return (    
     <div className="max-w-lg mx-auto mt-10 px-4 ">
 
-        <h2 className="text-[50px] font-semibold mt-2 text-left">Log in</h2>
+        <h2 className="text-[50px] font-semibold mt-2 text-center">Log in</h2>
         <div>
         <form onSubmit={handleSubmit} className="space-y-4">
             <label htmlFor='username' className="block text-lg font-large text-black-200 mb-0">Username: </label>
