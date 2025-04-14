@@ -8,7 +8,6 @@ export default function Page() {
   const { username } = useParams();
 
   const [formData, setFormData] = useState({
-    username: '',
     password: '',
     preferredSchools: '',
   });
@@ -19,18 +18,12 @@ export default function Page() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const loggedInUsername = localStorage.getItem('username');
 
-
     if (isLoggedIn === 'true' && loggedInUsername === username) {
       setAuthorized(true);
-      setFormData({
-        username: loggedInUsername,
-        password: '',
-        preferredSchools: '',
-      });
     } else {
       setAuthorized(false);
       alert('You must be logged in to view this page.');
-      router.push('/'); 
+      router.push('/');
     }
   }, [username, router]);
 
@@ -43,17 +36,37 @@ export default function Page() {
   };
 
   const handleSave = async () => {
-    console.log('Saving user data:', formData);
-    alert('Profile changes saved (simulated)');
-    setFormData({
-      username: '',
-      password: '',
-      preferredSchools: '',
-    });
+    try {
+      const response = await fetch(`/api/users/${username}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Profile changes saved!');
+      } else {
+        alert('Failed to save changes: ' + data.message);
+      }
+
+    
+      setFormData({
+        password: '',
+        preferredSchools: '',
+      });
+    } catch (err) {
+      console.error('Save error:', err);
+      alert('Something went wrong.');
+    }
   };
 
   if (authorized === null) return null;
-  if (authorized === false) return null; 
+  if (authorized === false) return null;
+
   return (
     <div className="max-w-2xl mx-auto mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-300">
       <h1 className="text-4xl font-bold text-center mb-6">
@@ -65,16 +78,6 @@ export default function Page() {
       </p>
 
       <div className="space-y-6">
-        <div>
-          <label className="block text-gray-700 text-lg mb-2">Username</label>
-          <input
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400"
-          />
-        </div>
-
         <div>
           <label className="block text-gray-700 text-lg mb-2">Password</label>
           <input
@@ -109,5 +112,3 @@ export default function Page() {
     </div>
   );
 }
-
-
