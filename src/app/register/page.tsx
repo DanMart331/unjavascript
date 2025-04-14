@@ -79,15 +79,6 @@ export default function registerPage() {
             placeholder="Password"
             required
             className="w-full p-2 border-[2px] border-gray-500 rounded-[10px]"
-          />
-          <label htmlFor='username' className="block text-lg font-large text-black-200 mb-0">Type: </label>
-          <input
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            placeholder="Type"
-            required
-            className="w-full p-2 border-[2px] border-gray-500 rounded-[10px]"
           />          
           <div className="flex justify-center">
             <button
