@@ -26,7 +26,7 @@ const itemSchema = new Schema<IItem>({
     type: String,
   },
   rating: {
-    type: Number, // ✅ leave off "required: false"
+    type: Number, // leave off "required: false"
   },
 });
 
