@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Comparison from '../../components/Comparison';
 
@@ -16,6 +15,12 @@ export default function ComparisonsPage() {
     const user = localStorage.getItem('username');
     if (user) setCurrentUser(user);
   }, []);
+
+  const handleChange = (index: number, field: string, value: string) => {
+    const updated = [...comparisons];
+    updated[index][field as keyof typeof updated[0]] = value;
+    setComparisons(updated);
+  };
 
   const handleDelete = (index: number) => {
     const updated = comparisons.filter((_, i) => i !== index);
@@ -53,6 +58,7 @@ export default function ComparisonsPage() {
               key={index}
               index={index}
               data={item}
+              onChange={handleChange}
               onDelete={handleDelete}
             />
           ))}
@@ -68,36 +74,6 @@ export default function ComparisonsPage() {
           </button>
         </div>
       </div>
-=======
-  const handleChange = (index: number, field: string, value: string) => {
-    const updated = [...comparisons];
-    updated[index][field as keyof typeof updated[0]] = value;
-    setComparisons(updated);
-  };
-
-  const handleDelete = () => {
-  };
-
-  return (
-    <div className="comparison-page">
-      {comparisons.map((item, index) => (
-        <Comparison
-          key={index}
-          index={index}
-          data={item}
-          onChange={handleChange}
-          onDelete={handleDelete}
-        />
-      ))}
-      <button style={{
-        border: '1px solid',
-        backgroundColor: 'Gainsboro',
-        marginLeft: '30px',
-        marginTop: '15px',
-        paddingLeft: '5px',
-        paddingRight: '5px'
-      }}>
-        Click here to compare colleges</button>
     </div>
   );
 }
