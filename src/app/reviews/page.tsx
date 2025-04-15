@@ -11,12 +11,11 @@ interface Review {
   rating: number;
 }
 
-const currentUser = 'Fatima';
-
 export default function ReviewsPage() {
+  const [currentUser, setCurrentUser] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState({
-    owner: currentUser,
+    owner: '',
     title: 'University Name',
     description: '',
     rating: 0,
@@ -27,6 +26,7 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     setMounted(true);
+    setCurrentUser(localStorage.getItem('username') || 'User');
     fetchReviews();
   }, []);
 
@@ -68,7 +68,7 @@ export default function ReviewsPage() {
     }
 
     const payload = {
-      owner: newReview.owner,
+      owner: currentUser,
       title: newReview.title,
       description: newReview.description,
       rating: newReview.rating,
@@ -131,20 +131,21 @@ export default function ReviewsPage() {
   return (
     <div className="p-6 w-full bg-[#FAFAF5] min-h-screen">
       <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-3">
+        <div className="flex justify-between items-center mb-4">
+          <Link href={`/profile/${currentUser}`} className="flex items-center gap-3 hover:opacity-80">
             <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
               {getInitials(currentUser)}
             </div>
             <span className="text-xl font-semibold text-black">User</span>
-          </div>
+          </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
-            <Link href="#" className="text-black hover:underline">Comparisons</Link>
-            <Link href="#" className="text-black hover:underline">Home</Link>
+            <Link href="/Comparison" className="text-black hover:underline">Comparisons</Link>
+            <Link href="/" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-red-600 font-bold">Reviews</Link>
-            <Link href="#" className="text-black hover:underline">Career Path</Link>
+            <Link href="/career" className="text-black hover:underline">Career Path</Link>
           </nav>
         </div>
+        <hr className="my-4 border-t border-gray-300" />
 
         <div className="text-center mb-6">
           <h1 className="text-3xl font-semibold mb-1">
@@ -273,3 +274,4 @@ export default function ReviewsPage() {
     </div>
   );
 }
+
