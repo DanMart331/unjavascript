@@ -8,9 +8,13 @@ export default function ComparisonsPage() {
     { major: '', college1: '', college2: '' }
   ]);
 
-  const handleDelete = (index: number) => {
-    const updated = comparisons.filter((_, i) => i !== index);
+  const handleChange = (index: number, field: string, value: string) => {
+    const updated = [...comparisons];
+    updated[index][field as keyof typeof updated[0]] = value;
     setComparisons(updated);
+  };
+
+  const handleDelete = () => {
   };
 
   return (
@@ -20,6 +24,7 @@ export default function ComparisonsPage() {
           key={index}
           index={index}
           data={item}
+          onChange={handleChange}
           onDelete={handleDelete}
         />
       ))}
