@@ -14,5 +14,4 @@ export async function POST(request: NextRequest) {
   if (!isMatch) return NextResponse.json({message: "Invalid Credentials" });
 
   return NextResponse.json({ message: "User logged in successfully" }, { status: 201 });
-  
 }

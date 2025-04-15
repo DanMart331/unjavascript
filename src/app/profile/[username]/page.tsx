@@ -86,7 +86,7 @@ export default function Page() {
             <span className="text-xl font-semibold text-black">User</span>
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
-            <Link href="/Comparison" className="text-black hover:underline">Comparisons</Link>
+            <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
             <Link href="/" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
             <Link href="/career" className="text-black hover:underline">Career Path</Link>
@@ -131,7 +131,7 @@ export default function Page() {
               onClick={handleSave}
               className="bg-blue-500 hover:bg-blue-600 text-white text-lg px-6 py-2 rounded-xl shadow-md"
             >
-              Save Changes
+            Save Changes
             </button>
           </div>
         </div>
@@ -139,4 +139,3 @@ export default function Page() {
     </div>
   );
 }
-
