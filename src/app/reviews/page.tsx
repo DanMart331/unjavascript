@@ -140,7 +140,7 @@ export default function ReviewsPage() {
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
             <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
-            <Link href="/" className="text-black hover:underline">Home</Link>
+            <Link href="/home" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-red-600 font-bold">Reviews</Link>
             <Link href="/career" className="text-black hover:underline">Career Path</Link>
           </nav>

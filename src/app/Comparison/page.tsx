@@ -22,7 +22,12 @@ export default function ComparisonsPage() {
     setComparisons(updated);
   };
 
+  const addComparison = (college1:string, college2:string, major:string) => {
+    setComparisons([...comparisons, {major,college1,college2}])
+  }
+
   const handleDelete = (index: number) => {
+    
   };
 
   const getInitials = (name: string) => {
@@ -43,7 +48,7 @@ export default function ComparisonsPage() {
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
             <Link href="/comparison" className="text-red-600 font-bold">Comparisons</Link>
-            <Link href="/" className="text-black hover:underline">Home</Link>
+            <Link href="/home" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
             <Link href="/career" className="text-black hover:underline">Career Path</Link>
           </nav>
@@ -67,6 +72,8 @@ export default function ComparisonsPage() {
             marginTop: '15px',
             paddingLeft: '5px',
             paddingRight: '5px'
+          }} onClick={() => {
+            addComparison("","","")
           }}>
             Click here to compare colleges
           </button>
