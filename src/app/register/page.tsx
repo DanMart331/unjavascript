@@ -10,7 +10,6 @@ export default function registerPage() {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    type: '',
   });
 
   const router = useRouter();
@@ -47,7 +46,7 @@ export default function registerPage() {
         throw new Error('Network response was not ok');
       }
 
-      setFormData({ username: '', password: '', type: '' });
+      setFormData({ username: '', password: '' });
       router.push('/login');
     } catch (error) {
       console.error('Error in CreateItem!', error);

@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import User from '../models/userSchema';
 import Link from 'next/link';
 
-
-
 export default function loginPage() {
     const [formData, setFormData] = useState({
         username: '',
@@ -16,8 +14,9 @@ export default function loginPage() {
 
   const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {      
         e.preventDefault();
+        console.log("Submit");
         try {
             const response = await fetch('/api/auth', {
                 method: 'POST',
@@ -27,7 +26,7 @@ export default function loginPage() {
                 body: JSON.stringify(formData),
               });
 
-              router.push('/home');
+              //router.push('/home');
         } catch (e) {
             console.log("Invalid");
         }
