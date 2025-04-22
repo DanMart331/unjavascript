@@ -37,7 +37,7 @@ export default function Comparison({ index, data, onChange, onDelete }: Comparis
           onChange={(e) => onChange(index, 'college2', e.target.value)}
           className="bg-gray-200 border border-gray-400 rounded outline-none focus:ring-2 focus:ring-blue-400 w-40"
         />
-      <button onClick={() => onDelete(index)} title="Delete" className="deleteIcon">
+      <button onClick={() => onDelete(index)} className="deleteIcon">
         <Image src={trashcan} alt="Delete Icon" width={20} height={20}/>
         </button>
     </div>

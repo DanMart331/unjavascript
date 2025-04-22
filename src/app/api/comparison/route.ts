@@ -2,16 +2,15 @@ import connectMongoDB from "../../../../config/mongodb";
 import Item from "../../models/itemSchema";
 import { NextResponse } from "next/server";
 
-// POST: Create review
+// POST: Create new comparison
 export async function POST(request: Request) {
   try {
-    const { owner, title, description, rating } = await request.json();
-    if (!owner || !title || !description || rating === 0) {
+    const { major, college1, college2 } = await request.json();
+    if (!major || !college1 || !college2) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
-
     await connectMongoDB();
-    const newItem = await Item.create({ owner, title, description, rating });
+    const newItem = await Item.create({ major, college1, college2 });
     return NextResponse.json(newItem, { status: 201 });
   } catch (error) {
     console.error("POST /api/items error:", error);
@@ -19,9 +18,9 @@ export async function POST(request: Request) {
   }
 }
 
-// GET: Return all reviews
+// GET: Retrieve all comparisons
 export async function GET() {
-  await connectMongoDB();
-  const items = await Item.find();
-  return NextResponse.json({ items }, { status: 200 });
+    await connectMongoDB();
+    const items = await Item.find();
+    return NextResponse.json({ items }, { status: 200 });
 }

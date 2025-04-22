@@ -1,58 +1,104 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Comparison from '../../components/Comparison';
 
+type ComparisonData = {
+  _id?: string;
+  major: string;
+  college1: string;
+  college2: string;
+};
+
 export default function ComparisonsPage() {
-  const [comparisons, setComparisons] = useState([
+  const [currentUser, setCurrentUser] = useState('');
+  const [comparisons, setComparisons] = useState<ComparisonData[]>([]);
+  const [newComparison, setNewComparison] = useState([
     { major: '', college1: '', college2: '' }
   ]);
-
-  const [currentUser, setCurrentUser] = useState('Guest');
+  const [mounted, setMounted] = useState(false);
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
-    const user = localStorage.getItem('username');
-    if (user) setCurrentUser(user);
+    setMounted(true);
+    setCurrentUser(localStorage.getItem('username') || 'User');
+    fetchComparisons();
   }, []);
 
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+  
+  const fetchComparisons = async () => {
+    const res = await fetch('/api/comparison');
+    const data = await res.json();
+    setComparisons(data.items);
+  };
+  if (!mounted) return null;
+
+  // Allows typing in textboxes
   const handleChange = (index: number, field: string, value: string) => {
-    const updated = [...comparisons];
+    const updated = [...newComparison];
     updated[index][field as keyof typeof updated[0]] = value;
-    setComparisons(updated);
+    setNewComparison(updated);
   };
 
   // Adds new comparison
-  const addComparison = (college1:string, college2:string, major:string) => {
-    setComparisons([...comparisons, {major, college1, college2}])
+  const addComparison = (major: string, college1: string, college2: string) => {
+    setNewComparison([...newComparison, {major, college1, college2}])
   }
 
   // Deletes comparison
-  const handleDelete = (index: number) => {
-    const updated = comparisons.filter((_, i) => i !== index);
-    setComparisons(updated);
+  const handleDelete = async (index: number) => {
+    const item = comparisons[index];
+    if (!item._id) {
+      setToast('This item has no ID and cannot be deleted.');
+      return;
+    }
+    try {
+      const res = await fetch(`/api/items/${item._id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const updated = comparisons.filter((_, i) => i !== index);
+        setComparisons(updated);
+        setToast('Comparison deleted.');
+        fetchComparisons();
+      } else {
+        setToast('Failed to delete comparison.');
+      }
+    } catch (error) {
+      console.error('Error deleting comparison:', error);
+      setToast('Error deleting comparison.');
+    }
   };
 
   // Submits a new comparison
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/comparisons', {
+      const response = await fetch('/api/comparison', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ comparisons, user: currentUser }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newComparison }),
       });
   
       if (response.ok) {
         const data = await response.json();
         console.log('Successfully submitted:', data);
+        setToast('Comparison submitted.');
+        fetchComparisons();
       } else {
         console.error('Submission failed:', await response.text());
+        setToast('Failed to submit comparison.');
       }
     } catch (error) {
       console.error('Error submitting comparisons:', error);
+      setToast('Error submitting comparison.');
     }
   };
 
@@ -85,7 +131,7 @@ export default function ComparisonsPage() {
         <hr className="my-4 border-t border-gray-300" />
 
         <div className="comparison-page">
-          {comparisons.map((item, index) => (
+          {newComparison.map((item, index) => (
             <Comparison
               key={index}
               index={index}
