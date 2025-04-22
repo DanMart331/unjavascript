@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Comparison from '../../components/Comparison';
 
-type ComparisonData = {
+interface ComparisonData {
   _id?: string;
   major: string;
   college1: string;
