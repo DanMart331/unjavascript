@@ -85,7 +85,6 @@ const Home = () => {
             <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
             <Link href="/home" className="text-red-600 font-bold">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
-            <Link href="/career" className="text-black hover:underline">Career Path</Link>
             <Link href="/" onClick={() => {
               localStorage.setItem('isLoggedIn', 'false');
               localStorage.setItem('username', '');
