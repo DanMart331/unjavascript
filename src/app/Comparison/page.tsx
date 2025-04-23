@@ -22,12 +22,38 @@ export default function ComparisonsPage() {
     setComparisons(updated);
   };
 
+  // Adds new comparison
   const addComparison = (college1:string, college2:string, major:string) => {
-    setComparisons([...comparisons, {major,college1,college2}])
+    setComparisons([...comparisons, {major, college1, college2}])
   }
 
+  // Deletes comparison
   const handleDelete = (index: number) => {
+    const updated = comparisons.filter((_, i) => i !== index);
+    setComparisons(updated);
+  };
 
+  // Submits a new comparison
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/comparisons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comparisons, user: currentUser }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Successfully submitted:', data);
+      } else {
+        console.error('Submission failed:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error submitting comparisons:', error);
+    }
   };
 
   const getInitials = (name: string) => {
@@ -50,7 +76,6 @@ export default function ComparisonsPage() {
             <Link href="/comparison" className="text-red-600 font-bold">Comparisons</Link>
             <Link href="/home" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
-            <Link href="/career" className="text-black hover:underline">Career Path</Link>
             <Link href="/" onClick={() => {
               localStorage.setItem('isLoggedIn', 'false');
               localStorage.setItem('username', '');
@@ -76,10 +101,21 @@ export default function ComparisonsPage() {
             marginTop: '15px',
             paddingLeft: '5px',
             paddingRight: '5px'
-          }} onClick={() => {
+          }}onClick={() => {
             addComparison("","","")
           }}>
-            Click here to compare colleges
+            Click here to add a new comparison
+          </button>
+          <button style={{
+            border: '1px solid',
+            backgroundColor: 'Gainsboro',
+            marginLeft: '25px',
+            marginTop: '15px',
+            paddingLeft: '5px',
+            paddingRight: '5px'
+          }}
+          onClick={handleSubmit}>
+            Submit Comparison
           </button>
         </div>
       </div>
