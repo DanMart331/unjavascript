@@ -63,7 +63,7 @@ export default function ComparisonsPage() {
     e.preventDefault();
   
     try {
-      const res = await fetch('/api/comparisons');
+      const res = await fetch('/api/comparison');
       const data = await res.json();
       const existingComparisons: ComparisonData[] = data.items || [];
   
@@ -74,7 +74,7 @@ export default function ComparisonsPage() {
       const toDelete = existingComparisons.filter(comp => !sameSet.has(checkSame(comp)));
       const deleteResults = await Promise.all(toDelete.map(async (comp) => {
         if (!comp._id) return null;
-        const res = await fetch(`/api/comparisons/${comp._id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/items/${comp._id}`, { method: 'DELETE' });
         return res.ok;
       }));
   
