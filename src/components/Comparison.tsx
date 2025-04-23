@@ -39,7 +39,7 @@ export default function Comparison({ index, data, onChange, onDelete }: Comparis
         />
       <button onClick={() => onDelete(index)} className="deleteIcon">
         <Image src={trashcan} alt="Delete Icon" width={20} height={20}/>
-        </button>
+      </button>
     </div>
   );
 }

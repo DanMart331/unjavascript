@@ -63,9 +63,9 @@ export default function ComparisonsPage() {
       const res = await fetch(`/api/items/${item._id}`, {
         method: 'DELETE',
       });
+      const updated = comparisons.filter((_, i) => i !== index);
+      setComparisons(updated);
       if (res.ok) {
-        const updated = comparisons.filter((_, i) => i !== index);
-        setComparisons(updated);
         setToast('Comparison deleted.');
         fetchComparisons();
       } else {
@@ -81,24 +81,33 @@ export default function ComparisonsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/comparison', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newComparison }),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Successfully submitted:', data);
-        setToast('Comparison submitted.');
-        fetchComparisons();
+      const results = await Promise.all(newComparison.map(async (comp) => {
+        const payload = {
+          major: comp.major,
+          college1: comp.college1,
+          college2: comp.college2,
+          user: currentUser
+        };
+        const response = await fetch('/api/comparison', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        setToast('Successfully saved.');
+        return { ok: response.ok, result };
+      }));
+
+      const failed = results.filter(r => !r.ok);
+      if (failed.length > 0) {
+        console.error('Some submissions failed:', failed);
+        setToast('Failed to saved comparison(s).');
       } else {
-        console.error('Submission failed:', await response.text());
-        setToast('Failed to submit comparison.');
+        setToast('All comparisons saved successfully!');
       }
     } catch (error) {
-      console.error('Error submitting comparisons:', error);
-      setToast('Error submitting comparison.');
+      console.error('Error saving comparisons:', error);
+      setToast('An error occurred during saving.');
     }
   };
 
@@ -161,7 +170,7 @@ export default function ComparisonsPage() {
             paddingRight: '5px'
           }}
           onClick={handleSubmit}>
-            Submit Comparison
+            Save Comparisons
           </button>
         </div>
       </div>

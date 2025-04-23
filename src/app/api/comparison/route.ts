@@ -13,8 +13,8 @@ export async function POST(request: Request) {
     const newComparison = await Comparison.create({ major, college1, college2 });
     return NextResponse.json(newComparison, { status: 201 });
   } catch (error) {
-    console.error("POST /api/items error:", error);
-    return NextResponse.json({ message: "Failed to create item", error }, { status: 500 });
+    console.error("POST /api/comparison error:", error);
+    return NextResponse.json({ message: "Failed to create comparison", error }, { status: 500 });
   }
 }
 
