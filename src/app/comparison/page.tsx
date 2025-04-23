@@ -85,24 +85,22 @@ export default function ComparisonsPage() {
           college2: comp.college2,
           user: currentUser
         };
-        const res = await fetch('/api/comparison', {
+        const response = await fetch('/api/comparison', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        return res.ok;
+        return response.ok;
       }));
-
       const failedDeletes = deleteResults.filter(ok => ok === false).length;
       const failedPosts = postResults.filter(ok => ok === false).length;
   
       if (failedDeletes > 0 || failedPosts > 0) {
-        setToast(`Some submissions failed. ${failedDeletes} deletions, ${failedPosts} creations.`);
+        setToast('Some submissions failed.');
       } else {
         setToast('Comparisons synced successfully!');
       }
       fetchComparisons();
-      setNewComparisons([{ major: '', college1: '', college2: '' }]);
     } catch (error) {
       console.error('Submission error:', error);
       setToast('An error occurred during submission.');
