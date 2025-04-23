@@ -114,23 +114,26 @@ export default function ComparisonsPage() {
   };
 
   return (
-    <div className="bg-[#FAFAF5] min-h-screen px-4 py-6">
+    <div className="p-6 w-full bg-[#FAFAF5] min-h-screen">
       <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <Link href={currentUser === 'Guest' ? '/' : `/profile/${currentUser}`} className="flex items-center gap-3 hover:opacity-80">
+        <div className="flex justify-between items-center mb-4">
+          <Link href={`/profile/${currentUser}`} className="flex items-center gap-3 hover:opacity-80">
             <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
               {getInitials(currentUser)}
             </div>
-            <span className="text-xl font-semibold text-black">{currentUser}</span>
+            <span className="text-xl font-semibold text-black">User</span>
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
-            <Link href="/comparison" className="text-red-600 font-bold">Comparisons</Link>
+            <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
             <Link href="/home" className="text-black hover:underline">Home</Link>
-            <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
+            <Link href="/reviews" className="text-red-600 font-bold">Reviews</Link>
             <Link href="/" onClick={() => {
               localStorage.setItem('isLoggedIn', 'false');
               localStorage.setItem('username', '');
+              document.cookie = "isLoggedIn=false";
             }} className="text-black hover:underline">Log Out</Link>
+            <Link href="/" onClick={() => {              
+            }} className="text-black hover:underline">Log In</Link>
           </nav>
         </div>
         <hr className="my-4 border-t border-gray-300" />
