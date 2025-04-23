@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useCookies, CookiesProvider } from 'react-cookie';
 
 export default function loginPage() {
+  
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -13,9 +15,10 @@ export default function loginPage() {
   const [currentUser, setCurrentUser] = useState('Guest');
   const router = useRouter();
 
+  
+
     const handleSubmit = async (e: React.FormEvent) => {      
-        e.preventDefault();
-        console.log("Submit");
+        e.preventDefault();                         
         try {
             const response = await fetch('/api/auth', {
                 method: 'POST',
@@ -25,10 +28,17 @@ export default function loginPage() {
                 body: JSON.stringify(formData),
               });
 
-              router.push('/home');
+              if (response.status === 201) {
+                localStorage.setItem('isLoggedIn', 'true');      
+                document.cookie = "isLoggedIn=true";
+                router.push('/home');
+              } else {
+                  alert("Invalid Credentials");                
+              }
+              
         } catch (e) {
             console.log("Invalid");
-        }
+        }             
     }
   
 
@@ -46,7 +56,7 @@ export default function loginPage() {
     return words.slice(0, 2).map((word) => word[0].toUpperCase()).join('') || 'G';
   };
 
-  return (
+  return (    
     <div className="bg-[#FAFAF5] min-h-screen px-4 py-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">

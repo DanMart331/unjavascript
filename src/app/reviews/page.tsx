@@ -143,10 +143,14 @@ export default function ReviewsPage() {
             <Link href="/home" className="text-black hover:underline">Home</Link>
             <Link href="/reviews" className="text-red-600 font-bold">Reviews</Link>
             <Link href="/career" className="text-black hover:underline">Career Path</Link>
+            { localStorage.getItem('isLoggedIn') === 'true'? 
             <Link href="/" onClick={() => {
               localStorage.setItem('isLoggedIn', 'false');
               localStorage.setItem('username', '');
-            }} className="text-black hover:underline">Log Out</Link>
+            }} className="text-black hover:underline">Log Out</Link> :
+            <Link href="/" onClick={() => {              
+            }} className="text-black hover:underline">Log In</Link>
+            }            
           </nav>
         </div>
         <hr className="my-4 border-t border-gray-300" />

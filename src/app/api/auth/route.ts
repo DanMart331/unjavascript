@@ -8,18 +8,16 @@ export async function POST(request: NextRequest) {
   const { username, password } = await request.json();
   const salt = await genSalt(10);
   const hashPassword = await hash(password, salt);  
-  console.log(hashPassword);
   await connectMongoDB();
  
   const user = await User.findOne({username});
-  if (!user) return NextResponse.json({ message: "Invalid credentials" });
+  if (!user) return NextResponse.json({ Error: "Invalid credentials" });
 
   const isMatch = await compareSync(password, user.password);
   if (!isMatch){
     console.log("Fail");
-    return NextResponse.json({message: "Invalid Credentials" });
+    return NextResponse.json({Error: "Invalid Credentials" });
   } 
 
-  console.log("Success");
-  return NextResponse.json({ message: "User logged in successfully" }, { status: 201 });
+  return NextResponse.json({ Message: "Success" }, { status: 201 });
 }
