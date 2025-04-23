@@ -5,7 +5,6 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IUser extends Document {
   username: string;
   password: string;
-  type: string;
 }
 
 // Define schema using the interface and types
@@ -17,9 +16,6 @@ const userSchema = new Schema<IUser>({
   password: {
     type: String,
     required: true,
-  },
-  type: {
-    type: String,
   },
 });
 

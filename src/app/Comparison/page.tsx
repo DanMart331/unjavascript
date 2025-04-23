@@ -48,6 +48,16 @@ export default function ComparisonsPage() {
   };
 
   // Adds new comparison
+<<<<<<< HEAD
+  const addComparison = (college1:string, college2:string, major:string) => {
+    setComparisons([...comparisons, {major, college1, college2}])
+  }
+
+  // Deletes comparison
+  const handleDelete = (index: number) => {
+    const updated = comparisons.filter((_, i) => i !== index);
+    setComparisons(updated);
+=======
   const addComparison = (major: string, college1: string, college2: string) => {
     setnewComparisons([...newComparisons, {major, college1, college2}])
   }
@@ -103,6 +113,7 @@ export default function ComparisonsPage() {
     } catch (error) {
       console.error('Error saving comparisons:', error);
       setToast('An error occurred during saving.');
+>>>>>>> 0ad3053519f7b8a0766e4f932ac96728b37a194a
     }
   };
 
@@ -165,7 +176,11 @@ export default function ComparisonsPage() {
             paddingRight: '5px'
           }}
           onClick={handleSubmit}>
+<<<<<<< HEAD
+            Submit Comparison
+=======
             Save Comparisons
+>>>>>>> 0ad3053519f7b8a0766e4f932ac96728b37a194a
           </button>
         </div>
       </div>

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 }
 
-// GET: Return all reviews
+// GET: Return all items
 export async function GET() {
   await connectMongoDB();
   const items = await Item.find();
