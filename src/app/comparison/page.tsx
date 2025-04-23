@@ -53,32 +53,35 @@ export default function ComparisonsPage() {
   }
 
   // Deletes comparison
-  const handleDelete = (index: number) => {
-    const updated = newComparisons.filter((_, i) => i !== index);
-    setNewComparisons(updated);
+  const handleDelete = async (index: number) => {
+    const item = comparisons[index];
+    if (!item._id) {
+      setToast('This item has no ID and cannot be deleted.');
+      return;
+    }
+    try {
+      const res = await fetch(`/api/items/${item._id}`, {
+        method: 'DELETE',
+      });
+      const updated = comparisons.filter((_, i) => i !== index);
+      setComparisons(updated);
+      if (res.ok) {
+        setToast('Comparison deleted.');
+        fetchComparisons();
+      } else {
+        setToast('Failed to delete comparison.');
+      }
+    } catch (error) {
+      console.error('Error deleting comparison:', error);
+      setToast('Error deleting comparison.');
+    }
   };
 
   // Submits a new comparison
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
     try {
-      const res = await fetch('/api/comparison');
-      const data = await res.json();
-      const existingComparisons: ComparisonData[] = data.items || [];
-  
-      const checkSame = (comp: ComparisonData) =>
-        `${comp.major.trim().toLowerCase()}|${comp.college1.trim().toLowerCase()}|${comp.college2.trim().toLowerCase()}`;
-      const sameSet = new Set(newComparisons.map(checkSame));
-  
-      const toDelete = existingComparisons.filter(comp => !sameSet.has(checkSame(comp)));
-      const deleteResults = await Promise.all(toDelete.map(async (comp) => {
-        if (!comp._id) return null;
-        const res = await fetch(`/api/items/${comp._id}`, { method: 'DELETE' });
-        return res.ok;
-      }));
-  
-      const postResults = await Promise.all(newComparisons.map(async (comp) => {
+      const results = await Promise.all(newComparisons.map(async (comp) => {
         const payload = {
           major: comp.major,
           college1: comp.college1,
@@ -88,22 +91,24 @@ export default function ComparisonsPage() {
         const response = await fetch('/api/comparison', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
-        return response.ok;
+        const result = await response.json();
+        setToast('Successfully saved.');
+        return { ok: response.ok, result };
       }));
-      const failedDeletes = deleteResults.filter(ok => ok === false).length;
-      const failedPosts = postResults.filter(ok => ok === false).length;
-  
-      if (failedDeletes > 0 || failedPosts > 0) {
-        setToast('Some submissions failed.');
+
+      const failed = results.filter(r => !r.ok);
+      if (failed.length > 0) {
+        console.error('Some submissions failed:', failed);
+        setToast('Failed to saved comparison(s).');
       } else {
         setToast('Comparisons synced successfully!');
       }
       fetchComparisons();
     } catch (error) {
-      console.error('Submission error:', error);
-      setToast('An error occurred during submission.');
+      console.error('Error saving comparisons:', error);
+      setToast('An error occurred during saving.');
     }
   };
 

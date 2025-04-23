@@ -13,6 +13,7 @@ import {
   Modal,
   Rating,
   Select,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import GSUImage from "../assets/georgia-state-university.png";
@@ -21,12 +22,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 
+
+
 const colleges: string[] = [
   "Georgia State University",
   "University of Georgia",
 ];
 const majors: string[] = ["Computer Science", "Computer Engineering"];
 const Home = () => {
+  const [major, setMajor] = useState("Computer Science");
+  const [college1, setCollege1] = useState('Georgia State University');
+  const [college2, setCollege2] = useState('University of Georgia');
     useEffect(() => {
       const user = localStorage.getItem('username');
       if (user) setCurrentUser(user);
@@ -41,6 +47,19 @@ const Home = () => {
   const handleClose = () => {
     setOpen(false);
   }
+
+  const handleMajorChange = (event: SelectChangeEvent) => {
+    setMajor(event.target.value);
+  };
+
+
+  const handleCollege1Change = (event: SelectChangeEvent) => {
+    setCollege1(event.target.value);
+  };
+
+  const handleCollege2Change = (event: SelectChangeEvent) => {
+    setCollege2(event.target.value);
+  };
 
   return (
     <div className="p-6 w-full bg-[#FAFAF5] min-h-screen">
@@ -124,9 +143,9 @@ const Home = () => {
 
             <Box>
               <FormControl sx={{ width: "10rem" }}>
-                <Select value={"Georgia State University"}>
+                <Select onChange={handleCollege1Change} value={college1}>
                   {colleges.map((college, index) => (
-                    <MenuItem value={college}>{college}</MenuItem>
+                    <MenuItem disabled={true ? college2 === college : false} value={college}>{college}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -141,7 +160,7 @@ const Home = () => {
 
             <Box>
               <FormControl sx={{ width: "10rem" }}>
-                <Select value={"Computer Science"}>
+                <Select onChange={handleMajorChange} value={major}>
                   {majors.map((major, index) => (
                     <MenuItem value={major}>{major}</MenuItem>
                   ))}
@@ -172,9 +191,9 @@ const Home = () => {
 
             <Box>
               <FormControl sx={{ width: "10rem" }}>
-                <Select value={"University of Georgia"}>
+                <Select onChange={handleCollege2Change} value={college2}>
                   {colleges.map((college, index) => (
-                    <MenuItem value={college}>{college}</MenuItem>
+                    <MenuItem disabled={true ? college1 === college : false} value={college}>{college}</MenuItem>
                   ))}
                 </Select>
               </FormControl>

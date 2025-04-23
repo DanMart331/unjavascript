@@ -23,6 +23,20 @@ export default function ReviewsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [toast, setToast] = useState('');
+  const [ listOfColleges, setListOfColleges] = useState([]);
+
+  useEffect(() => {
+
+    const doStuff = async () => {
+      const data = await fetch('http://universities.hipolabs.com/search?country=United%20States&limit=700');
+      const schools = await data.json();
+      setListOfColleges(schools);
+    }
+    
+    doStuff()
+
+
+  },[])
 
   useEffect(() => {
     setMounted(true);
@@ -148,16 +162,22 @@ export default function ReviewsPage() {
               document.cookie = "isLoggedIn=false";
             }} className="text-black hover:underline">Log Out</Link>
             <Link href="/" onClick={() => {              
-            }} className="text-black hover:underline">Log In</Link>
+            }} className="text-black hover:underline">Log In</Link> 
+                                  
           </nav>
         </div>
         <hr className="my-4 border-t border-gray-300" />
 
         <div className="text-center mb-6">
           <h1 className="text-3xl font-semibold mb-1">
-            College: <span className="text-yellow-500 text-3xl">{'★'.repeat(averageRating)}</span>
+            <span className="text-yellow-500 text-3xl">{'★'.repeat(averageRating)}</span>
           </h1>
-          <p className="text-gray-700 text-lg">{userReview?.title || newReview.title}</p>
+          <select>
+            {listOfColleges.map((college:any,index) => {
+              return <option key={index}>{college.name}</option>
+            })}
+          </select>
+          {/* <p className="text-gray-700 text-lg">{userReview?.title || newReview.title}</p> */}
         </div>
 
         {toast && <div className="mb-4 p-2 bg-green-100 text-green-700 rounded text-center">{toast}</div>}
