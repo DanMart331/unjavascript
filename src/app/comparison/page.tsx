@@ -14,7 +14,7 @@ interface ComparisonData {
 export default function ComparisonsPage() {
   const [currentUser, setCurrentUser] = useState('');
   const [comparisons, setComparisons] = useState<ComparisonData[]>([]);
-  const [newComparisons, setnewComparisons] = useState([
+  const [newComparisons, setNewComparisons] = useState([
     { major: '', college1: '', college2: '' }
   ]);
   const [mounted, setMounted] = useState(false);
@@ -44,39 +44,40 @@ export default function ComparisonsPage() {
   const handleChange = (index: number, field: string, value: string) => {
     const updated = [...newComparisons];
     updated[index][field as keyof typeof updated[0]] = value;
-    setnewComparisons(updated);
+    setNewComparisons(updated);
   };
 
   // Adds new comparison
   const addComparison = (major: string, college1: string, college2: string) => {
-    setnewComparisons([...newComparisons, {major, college1, college2}])
+    setNewComparisons([...newComparisons, {major, college1, college2}])
   }
 
   // Deletes comparison
   const handleDelete = (index: number) => {
     const updated = newComparisons.filter((_, i) => i !== index);
-    setnewComparisons(updated);
+    setNewComparisons(updated);
   };
 
   // Submits a new comparison
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
     try {
       const res = await fetch('/api/comparisons');
       const data = await res.json();
-      const currentComparisons: ComparisonData[] = data.items || [];
-
+      const existingComparisons: ComparisonData[] = data.items || [];
+  
       const checkSame = (comp: ComparisonData) =>
-        '${comp.major.trim().toLowerCase()}|${comp.college1.trim().toLowerCase()}|${comp.college2.trim().toLowerCase()}';
+        `${comp.major.trim().toLowerCase()}|${comp.college1.trim().toLowerCase()}|${comp.college2.trim().toLowerCase()}`;
       const sameSet = new Set(newComparisons.map(checkSame));
-
-      const checkDelete = currentComparisons.filter(comp => !sameSet.has(checkSame(comp)));
-      const deleteResults = await Promise.all(checkDelete.map(async (comp) => {
+  
+      const toDelete = existingComparisons.filter(comp => !sameSet.has(checkSame(comp)));
+      const deleteResults = await Promise.all(toDelete.map(async (comp) => {
         if (!comp._id) return null;
-        const res = await fetch('/api/comparisons/${comp._id}', { method: 'DELETE' });
+        const res = await fetch(`/api/comparisons/${comp._id}`, { method: 'DELETE' });
         return res.ok;
       }));
-
+  
       const postResults = await Promise.all(newComparisons.map(async (comp) => {
         const payload = {
           major: comp.major,
@@ -84,25 +85,27 @@ export default function ComparisonsPage() {
           college2: comp.college2,
           user: currentUser
         };
-        const response = await fetch('/api/comparison', {
+        const res = await fetch('/api/comparison', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-        return response.ok;
+        return res.ok;
       }));
 
       const failedDeletes = deleteResults.filter(ok => ok === false).length;
       const failedPosts = postResults.filter(ok => ok === false).length;
+  
       if (failedDeletes > 0 || failedPosts > 0) {
-        console.error('Some submissions failed');
-        setToast('Failed to saved comparison(s).');
+        setToast(`Some submissions failed. ${failedDeletes} deletions, ${failedPosts} creations.`);
       } else {
-        setToast('All comparisons saved successfully!');
+        setToast('Comparisons synced successfully!');
       }
+      fetchComparisons();
+      setNewComparisons([{ major: '', college1: '', college2: '' }]);
     } catch (error) {
-      console.error('Error saving comparisons:', error);
-      setToast('An error occurred during saving.');
+      console.error('Submission error:', error);
+      setToast('An error occurred during submission.');
     }
   };
 

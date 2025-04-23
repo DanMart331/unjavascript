@@ -82,7 +82,7 @@ const Home = () => {
             <span className="text-xl font-semibold text-black">{currentUser}</span>
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
-            <Link href="/Comparison" className="text-black hover:underline">Comparisons</Link>
+            <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
             <Link href="/home" className="text-red-600 font-bold">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
             <Link href="/" onClick={() => {

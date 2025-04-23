@@ -14,9 +14,6 @@ export default function loginPage() {
 
   const [currentUser, setCurrentUser] = useState('Guest');
   const router = useRouter();
-
-  
-
     const handleSubmit = async (e: React.FormEvent) => {      
         e.preventDefault();                         
         try {
