@@ -2,17 +2,10 @@ Majorpedia is a web application that allows users to give ratings and reviews to
 
 Group Members:
 - Alero Adegoroye
-<<<<<<< HEAD
--	Jack Alexander
--	Joshua Candra
--	Dante Martinez
--	Fatima Muhammad
-=======
 - Jack Alexander
 - Joshua Candra
 - Dante Martinez
 - Fatima Muhammad
->>>>>>> 0ad3053519f7b8a0766e4f932ac96728b37a194a
 
 ## Getting Started
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
