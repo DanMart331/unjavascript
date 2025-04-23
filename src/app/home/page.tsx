@@ -85,9 +85,14 @@ const Home = () => {
             <Link href="/Comparison" className="text-black hover:underline">Comparisons</Link>
             <Link href="/home" className="text-red-600 font-bold">Home</Link>
             <Link href="/reviews" className="text-black hover:underline">Reviews</Link>
+<<<<<<< HEAD
             { (localStorage.getItem('isLoggedIn') === "true")? 
             <Link href="/" onClick={() => {          
             localStorage.setItem('isLoggedIn', 'false');
+=======
+            <Link href="/" onClick={() => {
+              localStorage.setItem('isLoggedIn', 'false');
+>>>>>>> 0ad3053519f7b8a0766e4f932ac96728b37a194a
               localStorage.setItem('username', '');
               document.cookie = "isLoggedIn=false";
             }} className="text-black hover:underline">Log Out</Link> :

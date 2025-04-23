@@ -2,7 +2,7 @@ import connectMongoDB from "../../../../config/mongodb";
 import Item from "../../models/itemSchema";
 import { NextResponse } from "next/server";
 
-// POST: Create item
+// POST: Create review
 export async function POST(request: Request) {
   try {
     const { owner, title, description, rating } = await request.json();
