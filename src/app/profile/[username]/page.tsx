@@ -1,8 +1,9 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { AppContext } from '@/app/context';
 
 export default function Page() {
   const router = useRouter();
@@ -15,10 +16,12 @@ export default function Page() {
 
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [currentUser, setCurrentUser] = useState('');
+  const appSettings = useContext(AppContext);
+
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const loggedInUsername = localStorage.getItem('username');
+    const loggedInUsername = appSettings.getCookie("username")
 
     if (isLoggedIn === 'true' && loggedInUsername === username) {
       setAuthorized(true);

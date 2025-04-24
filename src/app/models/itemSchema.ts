@@ -6,7 +6,6 @@ export interface IItem extends Document {
   owner?: string;
   title: string;
   description?: string;
-  url?: string;
   rating?: number;
 }
 
@@ -20,9 +19,6 @@ const itemSchema = new Schema<IItem>({
     required: true,
   },
   description: {
-    type: String,
-  },
-  url: {
     type: String,
   },
   rating: {

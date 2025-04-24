@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Comparison from '../../components/Comparison';
+import { AppContext } from '../context';
 
 interface ComparisonData {
   _id?: string;
@@ -15,14 +16,15 @@ export default function ComparisonsPage() {
   const [currentUser, setCurrentUser] = useState('');
   const [comparisons, setComparisons] = useState<ComparisonData[]>([]);
   const [newComparisons, setNewComparisons] = useState([
-    { major: '', college1: '', college2: '' }
+    { major: '', college1: '', college2: '' ,user:""}
   ]);
   const [mounted, setMounted] = useState(false);
   const [toast, setToast] = useState('');
+  const appSettings = useContext(AppContext);
 
   useEffect(() => {
     setMounted(true);
-    setCurrentUser(localStorage.getItem('username') || 'User');
+    setCurrentUser(appSettings.getCookie("username")  || 'User');
     fetchComparisons();
   }, []);
 
@@ -32,11 +34,24 @@ export default function ComparisonsPage() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+
   
   const fetchComparisons = async () => {
     const res = await fetch('/api/comparison');
     const data = await res.json();
-    setComparisons(data.items);
+    let temp:any[] = []
+
+    data.comparisons.forEach((item:any) => {
+      if(appSettings.getCookie("username") === item.user){
+        temp.push(item);
+      }
+    })
+
+
+    console.log(temp)
+    setComparisons(temp);
+    setNewComparisons(temp);
   };
   if (!mounted) return null;
 
@@ -44,24 +59,34 @@ export default function ComparisonsPage() {
   const handleChange = (index: number, field: string, value: string) => {
     const updated = [...newComparisons];
     updated[index][field as keyof typeof updated[0]] = value;
+    console.log(updated);
     setNewComparisons(updated);
   };
 
   // Adds new comparison
   const addComparison = (major: string, college1: string, college2: string) => {
-    setNewComparisons([...newComparisons, {major, college1, college2}])
+    setNewComparisons([...newComparisons, {major, college1, college2,user:currentUser}])
+    console.log(newComparisons)
   }
 
   // Deletes comparison
   const handleDelete = async (index: number) => {
+    console.log(comparisons)
+
+    
     const item = comparisons[index];
     if (!item._id) {
       setToast('This item has no ID and cannot be deleted.');
       return;
     }
     try {
-      const res = await fetch(`/api/items/${item._id}`, {
+      const payload = {
+        id:item._id
+      }
+      const res = await fetch(`/api/comparison/`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body:JSON.stringify(payload)
       });
       const updated = comparisons.filter((_, i) => i !== index);
       setComparisons(updated);
@@ -88,14 +113,19 @@ export default function ComparisonsPage() {
           college2: comp.college2,
           user: currentUser
         };
-        const response = await fetch('/api/comparison', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const result = await response.json();
-        setToast('Successfully saved.');
-        return { ok: response.ok, result };
+
+        
+        if(!comparisons.includes(comp)){
+          const response = await fetch('/api/comparison', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const result = await response.json();
+          setToast('Successfully saved.');
+          return { ok: response.ok, result };
+        }       
+        return { ok: "Already exists" };
       }));
 
       const failed = results.filter(r => !r.ok);

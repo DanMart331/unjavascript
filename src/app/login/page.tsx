@@ -28,6 +28,7 @@ export default function loginPage() {
               if (response.status === 201) {
                 localStorage.setItem('isLoggedIn', 'true');      
                 document.cookie = "isLoggedIn=true";
+                document.cookie ="username="+ formData.username;
                 router.push('/home');
               } else {
                   alert("Invalid Credentials");                

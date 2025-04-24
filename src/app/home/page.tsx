@@ -19,8 +19,9 @@ import {
 import GSUImage from "../assets/georgia-state-university.png";
 import UGAImage from "../assets/university-of-georgia.jpg";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Link from 'next/link';
+import { AppContext } from "../context";
 
 
 
@@ -30,11 +31,54 @@ const colleges: string[] = [
 ];
 const majors: string[] = ["Computer Science", "Computer Engineering"];
 const Home = () => {
+
+  const ratings = useRef<any>([]);
+  useEffect(() => {
+    let temp:any = [];
+
+  
+    const fetchReviews = async () => {
+
+
+      const res = await fetch('/api/items');
+      const data = await res.json();
+      let temp:any = [];
+
+      appSettings.listOfColleges.forEach((college:any) => {
+        temp.push({name:college.name, rating:0})
+      })
+
+      console.log(temp);
+      temp.map((item1:any) => {
+        let length = 0;
+        let rating = 0;
+        data.items.forEach((item2:any) => {
+          if(item2.title == item1.name){
+            rating += item2.rating;
+            length++;
+          }
+        })
+
+        console.log(rating)
+        console.log(length)
+        return {...item1, rating:Math.floor(rating/length)}
+      })
+
+      ratings.current = temp;
+
+    };
+
+    fetchReviews()
+    // console.log(temp)
+  },[]);
+
+
   const [major, setMajor] = useState("Computer Science");
-  const [college1, setCollege1] = useState('Georgia State University');
-  const [college2, setCollege2] = useState('University of Georgia');
+  const appSettings = useContext(AppContext);
+  const [college1, setCollege1] = useState({name:'', rating:0});
+  const [college2, setCollege2] = useState({name:'', rating:0});
     useEffect(() => {
-      const user = localStorage.getItem('username');
+      const user = appSettings.getCookie("username")
       if (user) setCurrentUser(user);
     }, []);
   const [open, setOpen] = useState(false);
@@ -54,11 +98,16 @@ const Home = () => {
 
 
   const handleCollege1Change = (event: SelectChangeEvent) => {
-    setCollege1(event.target.value);
+    const rating = ratings.current.find((item:any) => item.name === event.target.value).rating;
+    console.log(rating);
+    setCollege1({name:event.target.value, rating});
   };
 
   const handleCollege2Change = (event: SelectChangeEvent) => {
-    setCollege2(event.target.value);
+    const rating = ratings.current.find((item:any) => item.name === event.target.value).rating;
+
+    
+    setCollege2({...college2, name:event.target.value, rating});
   };
 
   return (
@@ -129,23 +178,18 @@ const Home = () => {
               <Box>
                 <Typography>College:</Typography>
               </Box>
-              <Box sx={{ marginRight: "1rem" }}>
+              {/* <Box sx={{ marginRight: "1rem" }}>
                 <Box>
-                  <Rating readOnly={true} value={4} />
+                  <Rating readOnly={true} value={college1.rating} />
                 </Box>
-              </Box>
-              <Box sx={{ marginRight: "1rem" }}>
-                <Button onClick={() => {
-                    setOpen(true)
-                }}>Add Review</Button>
-              </Box>
+              </Box> */}
             </Box>
 
             <Box>
               <FormControl sx={{ width: "10rem" }}>
-                <Select onChange={handleCollege1Change} value={college1}>
-                  {colleges.map((college, index) => (
-                    <MenuItem disabled={true ? college2 === college : false} value={college}>{college}</MenuItem>
+                <Select onChange={handleCollege1Change} value={college1.name}>
+                  {appSettings.listOfColleges.map((college:any, index) => (
+                    <MenuItem disabled={true ? college2 === college.name : false} value={college.name}>{college.name}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -173,27 +217,18 @@ const Home = () => {
               <Box>
                 <Typography>College:</Typography>
               </Box>
-              <Box sx={{ marginRight: "1rem" }}>
+              {/* <Box sx={{ marginRight: "1rem" }}>
                 <Box>
-                  <Rating readOnly={true} value={4} />
+                  <Rating readOnly={true} value={college2.rating} />
                 </Box>
-              </Box>
-              <Box sx={{ marginRight: "1rem" }}>
-                <Button
-                  onClick={() => {
-                    setOpen(true);
-                  }}
-                >
-                  Add Review
-                </Button>
-              </Box>
+              </Box> */}
             </Box>
 
             <Box>
               <FormControl sx={{ width: "10rem" }}>
-                <Select onChange={handleCollege2Change} value={college2}>
-                  {colleges.map((college, index) => (
-                    <MenuItem disabled={true ? college1 === college : false} value={college}>{college}</MenuItem>
+                <Select onChange={handleCollege2Change} value={college2.name}>
+                  {appSettings.listOfColleges.map((college:any, index) => (
+                    <MenuItem disabled={true ? college1 === college.name : false} value={college.name}>{college.name}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -232,9 +267,6 @@ const Home = () => {
             </Box>
           </Box>
 
-          <Box>
-            <Button>Save Comparison</Button>
-          </Box>
           <Box sx={{ width: "50%" }}>
             <Box sx={{ position: "relative", height: "25rem" }}>
               <Image fill={true} alt="school" src={UGAImage} />

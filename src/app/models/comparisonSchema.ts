@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 // TypeScript interface for your item
 export interface IComparison extends Document {
+  user:string;
   major: string;
   college1: string;
   college2: string;
@@ -10,6 +11,10 @@ export interface IComparison extends Document {
 
 // Define schema using the interface and types
 const comparisonSchema = new Schema<IComparison>({
+  user:{
+    type:String,
+    required:true
+  },
   major: {
     type: String,
     required: true,

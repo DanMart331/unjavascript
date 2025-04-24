@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { AppContext } from '../context';
 
 interface Review {
   _id?: string;
@@ -23,24 +24,18 @@ export default function ReviewsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [toast, setToast] = useState('');
-  const [ listOfColleges, setListOfColleges] = useState([]);
+
+  const [selectedCollege, setSelectedCollege] = useState<string>('');
+
+  const appSettings = useContext(AppContext);
 
   useEffect(() => {
-
-    const doStuff = async () => {
-      const data = await fetch('http://universities.hipolabs.com/search?country=United%20States&limit=700');
-      const schools = await data.json();
-      setListOfColleges(schools);
-    }
-    
-    doStuff()
-
-
+    console.log(appSettings.listOfColleges);
   },[])
 
   useEffect(() => {
     setMounted(true);
-    setCurrentUser(localStorage.getItem('username') || 'User');
+    setCurrentUser(appSettings.getCookie("username") || 'User');
     fetchReviews();
   }, []);
 
@@ -57,6 +52,10 @@ export default function ReviewsPage() {
     setReviews(data.items);
   };
 
+
+  const handleCollegeChange = () => {
+
+  }
   if (!mounted) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -83,10 +82,11 @@ export default function ReviewsPage() {
 
     const payload = {
       owner: currentUser,
-      title: newReview.title,
+      title: selectedCollege,
       description: newReview.description,
       rating: newReview.rating,
     };
+    console.log(payload)
 
     try {
       if (editingId) {
@@ -138,9 +138,19 @@ export default function ReviewsPage() {
     setToast('Review deleted.');
   };
 
-  const userReview = reviews.find((r) => r.owner === currentUser);
-  const otherReviews = reviews.filter((r) => r.owner !== currentUser);
-  const averageRating = reviews.length > 0 ? Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) : 5;
+  const userReview = reviews.find((r) => r.owner === currentUser && r.title === selectedCollege);
+  const otherReviews = reviews.filter((r) => r.owner !== currentUser && r.title === selectedCollege);
+  const averageRating = reviews.length > 0 ? Math.round(reviews.reduce((sum, r) => {
+    if(r.title === selectedCollege){
+      return sum + r.rating
+    }
+    return sum + 0;
+  }, 0) / reviews.reduce((sum,r) => {
+    if(r.title === selectedCollege){
+      return sum + 1;
+    }
+    return sum + 0;
+  }, 0)) : 5;
 
   return (
     <div className="p-6 w-full bg-[#FAFAF5] min-h-screen">
@@ -150,7 +160,7 @@ export default function ReviewsPage() {
             <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
               {getInitials(currentUser)}
             </div>
-            <span className="text-xl font-semibold text-black">User</span>
+            <span className="text-xl font-semibold text-black">{currentUser}</span>
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
             <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
@@ -172,8 +182,10 @@ export default function ReviewsPage() {
           <h1 className="text-3xl font-semibold mb-1">
             <span className="text-yellow-500 text-3xl">{'★'.repeat(averageRating)}</span>
           </h1>
-          <select>
-            {listOfColleges.map((college:any,index) => {
+          <select onChange={(e) => {
+            setSelectedCollege(e.target.value);
+          }}>
+            {appSettings.listOfColleges.map((college:any,index) => {
               return <option key={index}>{college.name}</option>
             })}
           </select>
@@ -282,20 +294,24 @@ export default function ReviewsPage() {
           <h2 className="text-lg font-semibold mb-2 mt-8">Other Student Reviews</h2>
         )}
 
-        {otherReviews.map((review) => (
-          <div key={review._id} className="flex items-start gap-4 border rounded-lg p-4 shadow mb-4">
-            <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-              {getInitials(review.owner)}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-lg">{review.owner}</span>
-                <span className="text-yellow-500 text-sm">{'★'.repeat(review.rating)}</span>
+        {otherReviews.map((review) => {
+          if(review.title === selectedCollege){
+            return (
+              <div key={review._id} className="flex items-start gap-4 border rounded-lg p-4 shadow mb-4">
+              <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                {getInitials(review.owner)}
               </div>
-              <p className="text-sm text-gray-700 mt-1">{review.description}</p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-lg">{review.owner}</span>
+                  <span className="text-yellow-500 text-sm">{'★'.repeat(review.rating)}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-1">{review.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
+            )
+          }
+      })}
       </div>
     </div>
   );
