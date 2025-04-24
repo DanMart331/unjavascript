@@ -9,16 +9,17 @@ export default function Page() {
   const router = useRouter();
   const { username } = useParams();
 
-  const [formData, setFormData] = useState({
-    password: '',
-    preferredSchools: '',
-  });
 
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [currentUser, setCurrentUser] = useState('');
   const appSettings = useContext(AppContext);
 
 
+  const [formData, setFormData] = useState({
+    username:appSettings.getCookie('username'),
+    password: '',
+    preferredSchools: '',
+  });
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const loggedInUsername = appSettings.getCookie("username")
@@ -60,6 +61,7 @@ export default function Page() {
       }
 
       setFormData({
+        username:'',
         password: '',
         preferredSchools: '',
       });
@@ -86,7 +88,7 @@ export default function Page() {
             <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
               {getInitials(currentUser)}
             </div>
-            <span className="text-xl font-semibold text-black">User</span>
+            <span className="text-xl font-semibold text-black">{currentUser}</span>
           </Link>
           <nav className="flex space-x-10 text-lg font-semibold">
             <Link href="/comparison" className="text-black hover:underline">Comparisons</Link>
